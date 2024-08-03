@@ -11,6 +11,7 @@ import kotlinx.coroutines.*
 
 class MainActivity : AppCompatActivity() {
 
+    val scope = CoroutineScope(Dispatchers.IO + CoroutineName("OwnScope"))
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -22,6 +23,33 @@ class MainActivity : AppCompatActivity() {
             doNetworkCall1()
             doNetworkCall2()
             println("Hello from Coroutines background worker ${Thread.currentThread().name}")
+        }
+
+        scope.launch {
+
+            val job1 = launch {
+//                while (true){
+//                    delay(100)
+//                    println("Own Scope job 1")
+//                }
+                while (isActive){
+                    println("Own Scope job 1")
+                }
+            }
+            val job2 = launch {
+//                while (true){
+//                    delay(100)
+//                    println("Own Scope job 2")
+//                }
+                while (isActive){
+                    println("Own Scope job 2")
+                }
+            }
+
+            delay(2000)
+            job1.cancelAndJoin()
+            delay(1000)
+            println("Job 1 CANCELLED")
         }
 
         println("Main Thread ${Thread.currentThread().name}")
